@@ -8,7 +8,7 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 
-fetch('/stations.json')
+fetch('stations.json')
     .then(response => response.json())
     .then(stations => {
         stations.forEach(station => {
