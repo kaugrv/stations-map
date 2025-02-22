@@ -22,13 +22,16 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
 
-let notifTitle ="";
+let notifTitle = "";
 let notifBody = "";
 
 // Fetch all stations info.
+let stations = [];
+
 fetch('stations.json')
     .then(response => response.json())
-    .then(stations => {
+    .then(data => {
+        stations = data;
         stations.forEach(station => {
             var marker = L.marker([station.gps.lat, station.gps.lon]).addTo(map);
             marker.bindPopup(`
@@ -39,17 +42,11 @@ fetch('stations.json')
                     <button>Voir plus</button>
                 </a>
             `);
-            if(station.name=="Rue Saint-Maur") {
-                notifTitle = station.name;
-                notifBody = station.history;
-            }
         });
     })
     .catch(error => {
         console.error('Erreur lors du fetch (mwop) :', error);
     });
-
-
 
 // Get user's location.
 let user_location;
@@ -74,28 +71,59 @@ function update_position(pos) {
     else {
         user_marker.setLatLng([user_location.latitude, user_location.longitude])
     }
+
+    findNearestStation(user_location.latitude, user_location.longitude);
+}
+
+// Haversine formula to calculate distance between two points.
+function haversine(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; 
+}
+
+function findNearestStation(lat, lon) {
+    let nearestStation = null;
+    let minDistance = Infinity;
+
+    stations.forEach(station => {
+        const distance = haversine(lat, lon, station.gps.lat, station.gps.lon);
+        if (distance < minDistance) {
+            minDistance = distance;
+            nearestStation = station;
+        }
+    });
+
+    if (nearestStation) {
+        notifTitle = nearestStation.name;
+        notifBody = nearestStation.history ? nearestStation.history : " ";
+        sendNotification();
+    }
 }
 
 // Center map on user's location.
 map.locate({setView: true, maxZoom: 16});
 
-
 // Testing push notifications.
 const button = document.getElementById("notifications");
 button.addEventListener("click", () => {
-  Notification.requestPermission().then((result) => {
-    if (result === "granted") {
-      pushNotification();
-    }
-  });
+    Notification.requestPermission().then((result) => {
+        if (result === "granted") {
+            pushNotification();
+        }
+    });
 });
 
-function pushNotification() {
-    let notifImg ="images/map-pin.png";
+function sendNotification() {
+    let notifImg = "images/map-pin.png";
     let options = {
-      body: notifBody,
-      icon: notifImg,
+        body: notifBody,
+        icon: notifImg,
     };
     new Notification(notifTitle, options);
-  }
-  
+}
