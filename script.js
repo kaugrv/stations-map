@@ -54,8 +54,17 @@ let userMarker;
 
 function initGPSWatch() {
     if (navigator.geolocation) {
-        navigator.geolocation.watchPosition(updatePosition);
-        // alert("DEBUG: GPS watch init'd");
+        const retrievePosition = () => {
+            navigator.geolocation.getCurrentPosition(
+                updatePosition,
+                (err) => {
+                    alert(`ERROR(${err.code}): ${err.message}`);
+                }
+            );
+        };
+
+        setInterval(retrievePosition, 15000); // Every 15s
+        retrievePosition(); // And right now
     }
     else { 
         alert("Geolocation is not supported by this browser.");
@@ -72,8 +81,6 @@ function updatePosition(pos) {
     else {
         userMarker.setLatLng([userLocation.latitude, userLocation.longitude])
     }
-
-    // alert("DEBUG: GPS updat'd " + userMarker);
 
     findNearestStation(userLocation.latitude, userLocation.longitude);
 }
