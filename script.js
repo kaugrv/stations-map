@@ -55,6 +55,7 @@ let userMarker;
 function initGPSWatch() {
     if (navigator.geolocation) {
         navigator.geolocation.watchPosition(updatePosition);
+        alert("DEBUG: GPS watch init'd");
     }
     else { 
         alert("Geolocation is not supported by this browser.");
@@ -71,6 +72,8 @@ function updatePosition(pos) {
     else {
         userMarker.setLatLng([userLocation.latitude, userLocation.longitude])
     }
+
+    alert("DEBUG: GPS updat'd " + userMarker);
 
     findNearestStation(userLocation.latitude, userLocation.longitude);
 }
