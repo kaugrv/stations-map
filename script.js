@@ -49,12 +49,12 @@ fetch('stations.json')
     });
 
 // Get user's location.
-let user_location;
-let user_marker;
+let userLocation;
+let userMarker;
 
-function init_gps_watch() {
+function initGPSWatch() {
     if (navigator.geolocation) {
-        navigator.geolocation.watchPosition(update_position);
+        navigator.geolocation.watchPosition(updatePosition);
     }
     else { 
         alert("Geolocation is not supported by this browser.");
@@ -62,17 +62,17 @@ function init_gps_watch() {
 }
 
 
-function update_position(pos) {
-    user_location = pos.coords;
+function updatePosition(pos) {
+    userLocation = pos.coords;
 
-    if (user_marker == null) {
-        user_marker = L.circleMarker([user_location.latitude, user_location.longitude], {radius: 10, color: "red"}).addTo(map);
+    if (userMarker == null) {
+        userMarker = L.circleMarker([userLocation.latitude, userLocation.longitude], {radius: 10, color: "red"}).addTo(map);
     }
     else {
-        user_marker.setLatLng([user_location.latitude, user_location.longitude])
+        userMarker.setLatLng([userLocation.latitude, userLocation.longitude])
     }
 
-    findNearestStation(user_location.latitude, user_location.longitude);
+    findNearestStation(userLocation.latitude, userLocation.longitude);
 }
 
 // Haversine formula to calculate distance between two points.
