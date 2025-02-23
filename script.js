@@ -111,13 +111,18 @@ map.locate({setView: true, maxZoom: 16});
 
 // Testing push notifications.
 const button = document.getElementById("notifications");
-button.addEventListener("click", () => {
+button.addEventListener("click", grantNotificationPermission);
+
+function grantNotificationPermission() {
     Notification.requestPermission().then((result) => {
         if (result === "granted") {
-            pushNotification();
+            notifTitle = "Metro Stories";
+            notifBody = "Permission granted";
+            sendNotification();
         }
     });
-});
+    button.removeEventListener("click", grantNotificationPermission);
+}
 
 function sendNotification() {
     let notifImg = "images/map-pin.png";
