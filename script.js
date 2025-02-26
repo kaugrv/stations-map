@@ -58,7 +58,19 @@ function initGPSWatch() {
             navigator.geolocation.getCurrentPosition(
                 updatePosition,
                 (err) => {
-                    alert(`ERROR(${err.code}): ${err.message}`);
+                    // TODO: Better error handling than alerts
+                    switch (err.code) {
+                        case 1:
+                            alert("Please allow access to your location.");
+                            break;
+
+                        case 2:
+                            alert("Error accessing your location. Did you enable GPS on your device?");
+                            break;
+
+                        default:
+                            alert(`ERROR(${err.code}): ${err.message}`);
+                    }
                 }
             );
         };
