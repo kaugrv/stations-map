@@ -99,7 +99,7 @@ function haversine(lat1, lon1, lat2, lon2) {
 
 function findNearestStation(lat, lon) {
     let nearestStation = null;
-    let minDistance = Infinity;
+    let minDistance = 1.0; // Do not consider stations farther than 1km from user
 
     stations.forEach(station => {
         const distance = haversine(lat, lon, station.gps.lat, station.gps.lon);
