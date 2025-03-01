@@ -50,7 +50,8 @@ fetch('stations.json')
 
 // Get user's location.
 let userLocation;
-let userMarker;
+let userStation = null;
+let userMarker = null;
 
 function initGPSWatch() {
     if (navigator.geolocation) {
@@ -87,7 +88,7 @@ function initGPSWatch() {
 function updatePosition(pos) {
     userLocation = pos.coords;
 
-    if (userMarker == null) {
+    if (userMarker === null) {
         userMarker = L.circleMarker([userLocation.latitude, userLocation.longitude], {radius: 10, color: "red"}).addTo(map);
     }
     else {
@@ -121,7 +122,8 @@ function findNearestStation(lat, lon) {
         }
     });
 
-    if (nearestStation) {
+    if (nearestStation !== userStation) {
+        userStation = nearestStation;
         notifTitle = nearestStation.name;
         notifBody = nearestStation.history ? nearestStation.history : " ";
         sendNotification();
