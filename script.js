@@ -122,7 +122,7 @@ function findNearestStation(lat, lon) {
         }
     });
 
-    if (nearestStation !== userStation) {
+    if (nearestStation !== null && nearestStation !== userStation) {
         userStation = nearestStation;
         notifTitle = nearestStation.name;
         notifBody = nearestStation.history ? nearestStation.history : " ";
